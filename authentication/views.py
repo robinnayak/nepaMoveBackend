@@ -11,6 +11,7 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken  
  
 from django.contrib.auth.models import Group 
+from . import models
 
 
 def get_tokens_for_user(user):
@@ -37,13 +38,29 @@ class RegistrationView(APIView):
         try:
             if serializer.is_valid():
                 user = serializer.save()
-                token = get_tokens_for_user(user)
                 if user.is_organization:
+                    print("organizaton...")
                     group = Group.objects.get(name='organization')
                     user.groups.add(group)
+                    organization = models.Organization.objects.create(user=user)
+                    print("organization 1: ",organization)
+                    if organization is not None:
+                        token = get_tokens_for_user(user)
+                    
+                    print("organization",organization)
+                elif user.is_driver:
+                    print("driver...")
+                    group = Group.objects.get(name='driver')
+                    user.groups.add(group)
+                    driver = models.Driver.objects.create(user=user)
+                    print("driver 1: ",driver)
+                    if driver is not None:
+                        token = get_tokens_for_user(user)
+                    print("driver",driver)
                 else:
                     group = Group.objects.get(name='passenger')
                     user.groups.add(group)
+                    token = get_tokens_for_user(user)
                 message = {
                     'message': 'User created successfully',
                     'user': serializer.data,
