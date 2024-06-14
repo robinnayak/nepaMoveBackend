@@ -6,7 +6,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)    
     class Meta:
         model = CustomUser
-        fields = ['id','username','password','password2','email','phone_number','profile_image','is_organization']   
+        fields = ['id','username','password','password2','email','phone_number','profile_image','is_organization','is_driver']   
         extra_kwargs = {
             'password': {'write_only': True}
         }

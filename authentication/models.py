@@ -1,11 +1,11 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Group, Permission, PermissionsMixin
 from django.db import models    
 class CustomUserManger (BaseUserManager):
-    def create_user(self, username, email, password, phone_number, is_organization, **extra_fields):
+    def create_user(self, username, email, password, phone_number, is_organization, is_driver, **extra_fields):
         if not email:
             raise ValueError('The Email field must be set')
         email = self.normalize_email(email)
-        user = self.model(username=username, email=email, phone_number=phone_number, is_organization=is_organization, **extra_fields)
+        user = self.model(username=username, email=email, phone_number=phone_number, is_organization=is_organization,is_driver=is_driver, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         
@@ -40,6 +40,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     phone_number = models.CharField(max_length=15)
     profile_image = models.ImageField(upload_to='profile_image', blank=True, null=True)
     is_organization = models.BooleanField(default=False)
+    is_driver = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
 
     groups = models.ManyToManyField(Group,
@@ -51,6 +52,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     user_permissions = models.ManyToManyField(Permission,verbose_name=  'user permissions', blank=True, help_text="Specific permissions for the user", related_name='permission_user', related_query_name='permission_related_user') 
     
     is_organization = models.BooleanField(default=False)
+    is_driver = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -68,4 +70,31 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self) -> str:
         return self.username
+    
+    
+class Organization(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    name = models.CharField(max_length=150, blank=True, null=True)  
+    description = models.TextField(blank=True, null=True)   
+    logo = models.ImageField(upload_to='organization_logo', blank=True, null=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self) -> str:
+        return self.user.username
+    
+class Driver(models.Model):     
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE ,blank=True, null=True)
+    license_number = models.CharField(max_length=20,blank=True)
+    phone_number = models.CharField(max_length=15,blank=True)
+    address = models.CharField(max_length=255,blank=True)
+    date_of_birth = models.DateField(blank=True,null=True)
+    driving_experience = models.IntegerField(default=1)
+    rating = models.DecimalField(max_digits=2, decimal_places=1, default=0.0)
+    total_rides = models.PositiveIntegerField(default=0)
+    earnings = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    availability_status = models.BooleanField(default=True)
+    
+    def __str__(self) -> str:
+        return self.user.username
     
