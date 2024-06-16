@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView    
 # Create your views here.
 from .models import CustomUser
-from .serializers import CustomUserSerializer,CustomUserLoginSerializer
+from .serializers import CustomUserSerializer,CustomUserLoginSerializer,OrganizationSerializer,DriverSerializer
 from .renderers import UserRenderer 
 from django.contrib.auth import authenticate,login,logout
 
@@ -75,9 +75,6 @@ class RegistrationView(APIView):
         except Exception as e:
             return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
         
-        
-
-
 class LoginView(APIView):
     def post(self, request):
         try:
@@ -121,3 +118,89 @@ class LogoutView(APIView):
             return Response(message, status=status.HTTP_200_OK)
         except Exception as e:
             return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+        
+
+class OrganizationView(APIView):
+    renderer_classes = [UserRenderer]
+    def get(self,request):
+        organizations = models.Organization.objects.all()
+        try:
+            serializer = OrganizationSerializer(organizations,many=True)
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(str(e),status.HTTP_400_BAD_REQUEST)
+    
+    def post(self,request):
+        serializer = OrganizationSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            group = Group.objects.get(name='organization')
+            user.groups.add(group)
+            organization = models.Organization.objects.create(user=user)
+            message = {
+                'message': 'Organization created successfully',
+                'user': serializer.data
+            }
+            return Response(message, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class OrganizationDetailView(APIView):
+    renderer_classes = [UserRenderer]
+    def get(self,request,pk):
+        organization = models.Organization.objects.get(id=pk)
+        serializer = OrganizationSerializer(organization)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    
+    def put(self,request,pk):
+        
+        
+        organization = models.Organization.objects.get(id=pk)
+        phone_number = request.data.get('phone_number')
+        print("phone_number inside view: ",phone_number)
+        serializer = OrganizationSerializer(organization,data=request.data,context={"phone_number":phone_number})
+        if serializer.is_valid():
+            serializer.save()
+            message = {
+                'message': 'Organization updated successfully',
+                'user': serializer.data
+            }
+            return Response(message, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self,request,pk):
+        organization = models.Organization.objects.get(id=pk)
+        organization.delete()
+        message = {
+            'message': 'Organization deleted successfully'
+        }
+        return Response(message, status=status.HTTP_200_OK)
+    
+class DriverDetailView(APIView):
+    renderer_classes = [UserRenderer]
+    def get(self,request,pk):
+        driver = models.Driver.objects.get(id=pk)
+        serializer = DriverSerializer(driver)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    
+    def put(self,request,pk):
+        driver = models.Driver.objects.get(id=pk)
+        phone_number = request.data.get('phone_number')
+        print("phone_number inside view: ",phone_number)
+        serializer = DriverSerializer(driver,data=request.data,context={"phone_number":phone_number})
+        if serializer.is_valid():
+            serializer.save()
+            message = {
+                'message': 'Driver updated successfully',
+                'user': serializer.data
+            }
+            return Response(message, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self,request,pk):
+        driver = models.Driver.objects.get(id=pk)
+        driver.delete()
+        message = {
+            'message': 'Driver deleted successfully'
+        }
+        return Response(message, status=status.HTTP_200_OK) 

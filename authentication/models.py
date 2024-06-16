@@ -38,7 +38,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     password = models.CharField(max_length=128)
     
     phone_number = models.CharField(max_length=15)
-    profile_image = models.ImageField(upload_to='profile_image', blank=True, null=True)
+
     is_organization = models.BooleanField(default=False)
     is_driver = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
@@ -75,6 +75,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 class Organization(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     name = models.CharField(max_length=150, blank=True, null=True)  
+    profile_image = models.ImageField(upload_to='profile_image', blank=True, null=True)
     description = models.TextField(blank=True, null=True)   
     logo = models.ImageField(upload_to='organization_logo', blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
@@ -85,8 +86,8 @@ class Organization(models.Model):
 class Driver(models.Model):     
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE ,blank=True, null=True)
+    profile_image = models.ImageField(upload_to='profile_image', blank=True, null=True)
     license_number = models.CharField(max_length=20,blank=True)
-    phone_number = models.CharField(max_length=15,blank=True)
     address = models.CharField(max_length=255,blank=True)
     date_of_birth = models.DateField(blank=True,null=True)
     driving_experience = models.IntegerField(default=1)
