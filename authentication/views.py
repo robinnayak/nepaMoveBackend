@@ -148,14 +148,14 @@ class OrganizationView(APIView):
 class OrganizationDetailView(APIView):
     renderer_classes = [UserRenderer]
     def get(self,request,pk):
-        organization = models.Organization.objects.get(id=pk)
+        user = models.CustomUser.objects.get(id=pk)
+        organization = models.Organization.objects.get(user=user)
         serializer = OrganizationSerializer(organization)
         return Response(serializer.data,status=status.HTTP_200_OK)
     
     def put(self,request,pk):
-        
-        
-        organization = models.Organization.objects.get(id=pk)
+        user = models.CustomUser.objects.get(id=pk)
+        organization = models.Organization.objects.get(user=user)
         phone_number = request.data.get('phone_number')
         print("phone_number inside view: ",phone_number)
         serializer = OrganizationSerializer(organization,data=request.data,context={"phone_number":phone_number})
@@ -169,7 +169,8 @@ class OrganizationDetailView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def delete(self,request,pk):
-        organization = models.Organization.objects.get(id=pk)
+        user = models.CustomUser.objects.get(id=pk)
+        organization = models.Organization.objects.get(user=user)
         organization.delete()
         message = {
             'message': 'Organization deleted successfully'
@@ -179,12 +180,14 @@ class OrganizationDetailView(APIView):
 class DriverDetailView(APIView):
     renderer_classes = [UserRenderer]
     def get(self,request,pk):
-        driver = models.Driver.objects.get(id=pk)
+        user = models.CustomUser.objects.get(id=pk)
+        driver = models.Driver.objects.get(user=user)
         serializer = DriverSerializer(driver)
         return Response(serializer.data,status=status.HTTP_200_OK)
     
     def put(self,request,pk):
-        driver = models.Driver.objects.get(id=pk)
+        user = models.CustomUser.objects.get(id=pk)
+        driver = models.Driver.objects.get(user=user)
         phone_number = request.data.get('phone_number')
         print("phone_number inside view: ",phone_number)
         serializer = DriverSerializer(driver,data=request.data,context={"phone_number":phone_number})
@@ -198,7 +201,8 @@ class DriverDetailView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def delete(self,request,pk):
-        driver = models.Driver.objects.get(id=pk)
+        user = models.CustomUser.objects.get(id=pk)
+        driver = models.Driver.objects.get(user=user)
         driver.delete()
         message = {
             'message': 'Driver deleted successfully'
