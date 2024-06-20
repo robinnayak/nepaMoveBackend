@@ -72,7 +72,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
     user = CustomUserSerializer(read_only=True)
     class Meta:
         model = Organization
-        fields = ['id','user','name','profile_image','description','logo']   
+        fields = ['id','user','driver','name','profile_image','description','logo']   
     
     def update(self, instance, validated_data):
 
@@ -104,7 +104,7 @@ class DriverSerializer(serializers.ModelSerializer):
     user = CustomUserSerializer(read_only=True)
     class Meta:
         model = Driver
-        fields = ['id','user','organization','profile_image','license_number','address','date_of_birth','driving_experience','rating','total_rides','earnings','availability_status']   
+        fields = ['id','user','profile_image','license_number','address','date_of_birth','driving_experience','rating','total_rides','earnings','availability_status']   
     
     def update(self, instance, validated_data):
         # print("validated data: ",validated_data)
