@@ -71,21 +71,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def __str__(self) -> str:
         return self.username
     
-    
-class Organization(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    name = models.CharField(max_length=150, blank=True, null=True)  
-    profile_image = models.ImageField(upload_to='profile_image', blank=True, null=True)
-    description = models.TextField(blank=True, null=True)   
-    logo = models.ImageField(upload_to='organization_logo', blank=True, null=True)
-    date_created = models.DateTimeField(auto_now_add=True)
-    
-    def __str__(self) -> str:
-        return self.user.username
-    
 class Driver(models.Model):     
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE ,blank=True, null=True)
     profile_image = models.ImageField(upload_to='profile_image', blank=True, null=True)
     license_number = models.CharField(max_length=20,blank=True)
     address = models.CharField(max_length=255,blank=True)
@@ -98,4 +85,17 @@ class Driver(models.Model):
     
     def __str__(self) -> str:
         return self.user.username
+    
+class Organization(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    driver = models.ManyToManyField(Driver, blank=True, related_query_name='organization_driver')
+    name = models.CharField(max_length=150, blank=True, null=True)  
+    profile_image = models.ImageField(upload_to='profile_image', blank=True, null=True)
+    description = models.TextField(blank=True, null=True)   
+    logo = models.ImageField(upload_to='organization_logo', blank=True, null=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self) -> str:
+        return self.user.username
+    
     
