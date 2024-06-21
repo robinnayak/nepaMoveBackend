@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path,include
 from . import views
 from authentication.views import  OrganizationDetailView,RegistrationView,LoginView,LogoutView,OrganizationView,DriverDetailView
 urlpatterns = [
@@ -7,6 +7,6 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
     path('logout/',LogoutView.as_view(), name='logout'),
     path('organizations/',OrganizationView.as_view(), name='organizations'),
-    path('organizations/<int:pk>/',OrganizationDetailView.as_view(), name='organization'),
-    path('driver/<int:pk>/',DriverDetailView.as_view(), name='drivers'),
+    path('organizations/<int:pk>/',include('organization.urls'), name='organizationss'),
+    path('driver/<int:pk>/',include('driver.urls'), name='driver'),
 ]
