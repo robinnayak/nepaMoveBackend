@@ -12,7 +12,7 @@ from authentication.models import Driver,Organization
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
-import stripe
+# import stripe
 
 
 
