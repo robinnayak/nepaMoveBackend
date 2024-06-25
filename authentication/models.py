@@ -73,8 +73,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     
 class Driver(models.Model):     
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    organization = models.ForeignKey('Organization', on_delete=models.CASCADE, blank=True, null=True, related_query_name='driver_organization')
     profile_image = models.ImageField(upload_to='profile_image', blank=True, null=True)
-    license_number = models.CharField(max_length=20,blank=True)
+    license_number = models.CharField(max_length=20,blank=True,unique=True)
     address = models.CharField(max_length=255,blank=True)
     date_of_birth = models.DateField(blank=True,null=True)
     driving_experience = models.IntegerField(default=1)
@@ -88,7 +89,7 @@ class Driver(models.Model):
     
 class Organization(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    driver = models.ManyToManyField(Driver, blank=True, related_query_name='organization_driver')
+    # driver = models.ManyToManyField(Driver, on_delete=models.CASCADE, blank=True, null=True, related_query_name='organization_driver')
     name = models.CharField(max_length=150, blank=True, null=True)  
     profile_image = models.ImageField(upload_to='profile_image', blank=True, null=True)
     description = models.TextField(blank=True, null=True)   

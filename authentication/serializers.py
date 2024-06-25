@@ -72,10 +72,12 @@ class OrganizationSerializer(serializers.ModelSerializer):
     user = CustomUserSerializer(read_only=True)
     class Meta:
         model = Organization
-        fields = ['id','user','driver','name','profile_image','description','logo']   
+        fields = '__all__'   
     
     def update(self, instance, validated_data):
-
+        # check_driver = self.context.get('check_driver')
+        # driver_license = self.context.get('driver_license')
+        # print("check_driver: ",check_driver)
         # print("validated data: ",validated_data)
         # print("instance data: ",instance.user.email)
         phone_number = self.context.get('phone_number')
@@ -86,6 +88,16 @@ class OrganizationSerializer(serializers.ModelSerializer):
                 user = instance.user
                 user.phone_number = phone_number
                 user.save()
+        
+        # if check_driver:
+        #     driver = Driver.objects.get(license_number=driver_license)
+        #     instance.driver = driver
+        #     print("instance driver: ",instance.driver)
+        #     instance.save()
+            
+        # print("instance driver outside: ",instance.driver)
+            
+            
             
         
         # if phone_number:
@@ -101,14 +113,25 @@ class OrganizationSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)   
   
 class DriverSerializer(serializers.ModelSerializer):
+
+    
+    
     user = CustomUserSerializer(read_only=True)
+    
     class Meta:
         model = Driver
-        fields = ['id','user','profile_image','license_number','address','date_of_birth','driving_experience','rating','total_rides','earnings','availability_status']   
-    
+        fields = '__all__'
     def update(self, instance, validated_data):
         # print("validated data: ",validated_data)
+        check_organization = self.context.get('check_organization')
+        org_email = self.context.get('org_email')
         phone_number = self.context.get('phone_number')
+        
+        if check_organization:
+            organization = Organization.objects.get(user__email=org_email)
+            instance.organization = organization
+            print("instance driver: ",instance.organization)
+            instance.save()
         if phone_number:
             user_serializer = CustomUserSerializer(instance.user)
             # print("user_serializer data: ",user_serializer.data)

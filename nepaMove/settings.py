@@ -18,11 +18,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'api',
-    'authentication',
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
+    
+    'api',
+    'authentication',
+    'driver',
+    'organization',
+    'passenger',
 ]
 
 MIDDLEWARE = [
@@ -66,6 +70,7 @@ WSGI_APPLICATION = 'nepaMove.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(default=config('DATABASE_URL'))
 }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
