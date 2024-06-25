@@ -1,3 +1,4 @@
+
 {
     "version": 2,
     "builds": [
@@ -12,12 +13,16 @@
     ],
     "routes": [
         {
-            "src": "/static/(.*)",
-            "dest": "/static/$1"
-        },
-        {
-            "src": "/(.*)",
-            "dest": "nepaMove/wsgi.py"
+           "src": "/(.*)",
+            "dest": "nepaMove/wsgi.py",
+            "methods": [
+                "GET",
+                "POST",
+                "PUT",
+                "PATCH",
+                "DELETE",
+                "OPTIONS"
+            ]
         }
     ]
 }

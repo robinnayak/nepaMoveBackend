@@ -11,7 +11,5 @@ urlpatterns = [
     # path('vehicle/',VehicleView.as_view(), name='vehicle' ),
     # path('vehicle/',VehicleView.as_view(), name='vehicle' ),
     # path('vehicle/',VehicleView.as_view(), name='vehicle' ),
-    
-    
     path('driver/<int:pk>/',include('driver.urls'), name='driver'),
 ]
